@@ -1,0 +1,42 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>
+    <Version>1.0.0</Version>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <FileVersion>1.0.0.0</FileVersion>
+    <Copyright>© 2025 Happenstance Games LLC</Copyright>
+    <Company>Happenstance Games LLC</Company>
+    <Product>HS Stride Multi-Mesh Model Importer</Product>
+    <Description>WPF application for splitting multi-mesh models and animations for Stride Engine</Description>
+    <ApplicationIcon>hs-model.ico</ApplicationIcon>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="hs-model-icon.png" />
+    <None Remove="hs-model.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="hs-model.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\HS.Stride.Model.Importer.Core\HS.Stride.Model.Importer.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="hs-model-icon.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="hs-model.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+  </ItemGroup>
+
+</Project>
