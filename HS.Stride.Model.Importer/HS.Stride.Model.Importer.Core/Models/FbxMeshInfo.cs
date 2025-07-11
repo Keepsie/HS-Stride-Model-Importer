@@ -15,6 +15,7 @@ namespace HS.Stride.Model.Importer.Core.Models
         public int FaceCount { get; set; }
         public List<string> MaterialNames { get; set; } = new();
         public string? ParentName { get; set; }
+        public string? NodePath { get; set; }
         public int MeshIndex { get; set; }
         public List<int> MeshIndices { get; set; } = new();
         public List<FbxMeshInfo> Children { get; set; } = new();
