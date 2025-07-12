@@ -1,6 +1,7 @@
 // HS Stride Model Importer (c) 2025 Happenstance Games LLC - MIT License
 
 using HS.Stride.Model.Importer.Core.Models;
+using System.Globalization;
 using System.Text;
 
 namespace HS.Stride.Model.Importer.Core.Core
@@ -107,6 +108,9 @@ namespace HS.Stride.Model.Importer.Core.Core
         private string GenerateEntityPart(FbxMeshInfo meshInfo, string entityGuid, string transformGuid, string modelGuid, string assetReference)
         {
             var sb = new StringBuilder();
+            var p = new System.Numerics.Vector3(meshInfo.Position.X / 100f, meshInfo.Position.Y / 100f, meshInfo.Position.Z / 100f);
+            var r = meshInfo.Rotation;
+            var s = meshInfo.Scale;
 
             sb.AppendLine("        -   Entity:");
             sb.AppendLine($"                Id: {entityGuid}");
@@ -114,9 +118,9 @@ namespace HS.Stride.Model.Importer.Core.Core
             sb.AppendLine("                Components:");
             sb.AppendLine("                    e9f67a8a0ea22804b0285279fe8c2c41: !TransformComponent");
             sb.AppendLine($"                        Id: {transformGuid}");
-            sb.AppendLine("                        Position: {X: 0.0, Y: 0.0, Z: 0.0}");
-            sb.AppendLine("                        Rotation: {X: 0.0, Y: 0.0, Z: 0.0, W: 1.0}");
-            sb.AppendLine("                        Scale: {X: 1.0, Y: 1.0, Z: 1.0}");
+            sb.AppendLine($"                        Position: {{X: {p.X.ToString(CultureInfo.InvariantCulture)}, Y: {p.Y.ToString(CultureInfo.InvariantCulture)}, Z: {p.Z.ToString(CultureInfo.InvariantCulture)}}}");
+            sb.AppendLine($"                        Rotation: {{X: {r.X.ToString(CultureInfo.InvariantCulture)}, Y: {r.Y.ToString(CultureInfo.InvariantCulture)}, Z: {r.Z.ToString(CultureInfo.InvariantCulture)}, W: {r.W.ToString(CultureInfo.InvariantCulture)}}}");
+            sb.AppendLine($"                        Scale: {{X: {s.X.ToString(CultureInfo.InvariantCulture)}, Y: {s.Y.ToString(CultureInfo.InvariantCulture)}, Z: {s.Z.ToString(CultureInfo.InvariantCulture)}}}");
             sb.AppendLine("                        Children: {}");
             sb.AppendLine("                    9a5a0c793a9d36c3de89e0e51b089965: !ModelComponent");
             sb.AppendLine($"                        Id: {modelGuid}");

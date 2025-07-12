@@ -303,13 +303,18 @@ namespace HS.Stride.Model.Importer.Core.Core
                 return null;
             }
 
-            // Get the global transform to preserve the pivot point
-            var globalTransform = GetGlobalTransform(originalNode);
+            // Get the local transform 
+            var localTransform = originalNode.Transform;
+            
+            // Zero out position for clean pivot
+            localTransform.A4 = 0;
+            localTransform.B4 = 0;
+            localTransform.C4 = 0;
 
-            // Create the mesh node with the global transform
+            // Create the mesh node with the modified transform
             var meshNode = new Node(meshInfo.OriginalName)
             {
-                Transform = globalTransform
+                Transform = localTransform
             };
             
             // Add all meshes from this node
