@@ -6,7 +6,7 @@ namespace HS.Stride.Model.Importer.Console
 {
     internal class Program
     {
-        private const string VERSION = "1.0.0";
+        private const string VERSION = "1.1.0";
         
         static async Task Main(string[] args)
         {
@@ -17,7 +17,7 @@ namespace HS.Stride.Model.Importer.Console
 
             if (args.Length < 2)
             {
-                ShowInfo("Welcome to the Multi-Mesh Model Importer Wizard!");
+                ShowInfo("Welcome to the Model Importer Wizard!");
                 ShowInfo("This tool splits multi-mesh 3D models into individual parts and creates Stride prefabs.");
                 System.Console.WriteLine();
 
