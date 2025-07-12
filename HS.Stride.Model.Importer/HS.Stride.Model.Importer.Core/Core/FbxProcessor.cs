@@ -303,10 +303,13 @@ namespace HS.Stride.Model.Importer.Core.Core
                 return null;
             }
 
-            // Create the mesh node preserving the original transform
+            // Get the global transform to preserve the pivot point
+            var globalTransform = GetGlobalTransform(originalNode);
+
+            // Create the mesh node with the global transform
             var meshNode = new Node(meshInfo.OriginalName)
             {
-                Transform = originalNode.Transform
+                Transform = globalTransform
             };
             
             // Add all meshes from this node
@@ -381,6 +384,22 @@ namespace HS.Stride.Model.Importer.Core.Core
             }
             
             return null;
+        }
+
+        private Assimp.Matrix4x4 GetGlobalTransform(Node node)
+        {
+            Assimp.Matrix4x4 global = node.Transform;
+            var current = node.Parent;
+
+            // Walk up the hierarchy and multiply transforms
+            // world = Parent * ... * Child (column-vector convention)
+            while (current != null)
+            {
+                global = current.Transform * global;
+                current = current.Parent;
+            }
+
+            return global;
         }
 
         public void Dispose() => _context.Dispose();
