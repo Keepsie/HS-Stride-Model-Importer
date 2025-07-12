@@ -1,4 +1,4 @@
-# HS Stride Multi-Mesh Model Importer
+# HS Stride Model Importer
 
 A simple tool that solves Stride's multi-mesh FBX import limitation - multi-mesh models get imported as single blobs instead of editable hierarchies.
 
