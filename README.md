@@ -52,6 +52,20 @@ This tool splits your multi-mesh FBX into individual meshes and creates a Stride
 HS.Stride.Model.Importer.Console.exe MyModel.fbx ./output/
 ```
 
+## ⚠️ Important Blender Export Note
+
+**If you're exporting from Blender and experiencing issues with wrong scale or position:**
+
+When exporting FBX from Blender, **enable "Apply Transform"** in the Transform section (marked as Experimental). This is required for proper Stride compatibility.
+
+```
+File → Export → FBX
+└── Transform Section
+    └── ☑️ Apply Transform (Experimental) ← Check this!
+```
+
+This ensures transforms are baked correctly for Stride Engine.
+
 ## 📁 What You Get
 
 ```
