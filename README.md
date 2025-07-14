@@ -1,6 +1,6 @@
 # HS Stride Model Importer
 
-A simple tool that solves Stride's multi-mesh FBX import limitation - multi-mesh models get imported as single blobs instead of editable hierarchies.
+Multi-mesh FBX splitter and prefab creator for Stride Game Engine. Converts flattened FBX imports into individual selectable mesh parts with proper hierarchy and transform data preservation.
 
 ![HS Model Importer UI](hs_mode_importer_ui.PNG)
 
