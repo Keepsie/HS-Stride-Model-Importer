@@ -56,6 +56,8 @@ HS.Stride.Model.Importer.Console.exe MyModel.fbx ./output/
 
 **If you're exporting from Blender and experiencing issues with wrong scale or position:**
 
+Make sure the models scale is applied before exporting. This is the cause of a lot of issues in all types of places. 
+
 When exporting FBX from Blender, **enable "Apply Transform"** in the Transform section (marked as Experimental). This is required for proper Stride compatibility.
 
 ```
