@@ -52,21 +52,50 @@ This tool splits your multi-mesh FBX into individual meshes and creates a Stride
 HS.Stride.Model.Importer.Console.exe MyModel.fbx ./output/
 ```
 
-## ⚠️ Important Blender Export Note
+## ⚠️ Important Blender Export Notes
 
-**If you're exporting from Blender and experiencing issues with wrong scale or position:**
+### ✅ Always Enable "Apply Transform" When Exporting
 
-Make sure the models scale is applied before exporting. This is the cause of a lot of issues in all types of places. 
+**When exporting FBX from Blender, ALWAYS enable "Apply Transform":**
 
-When exporting FBX from Blender, **enable "Apply Transform"** in the Transform section (marked as Experimental). This is required for proper Stride compatibility.
-
+EXPORTING SETTINGS:
 ```
 File → Export → FBX
 └── Transform Section
-    └── ☑️ Apply Transform (Experimental) ← Check this!
+    └── ☑️ Apply Transform (Experimental) ← ALWAYS check this!
 ```
 
-This ensures transforms are baked correctly for Stride Engine.
+**Why this matters:** This fixes many Stride import issues including:
+- Meshes breaking or appearing corrupted
+- Faces rendering on the wrong side
+- General geometry wonkiness
+- **Does NOT change your pivot points** - they stay exactly where you set them
+
+### If You're Having Rotation or Scale Issues (Models all over the place)
+
+BLENDER SCENE SETTINGS:
+
+If meshes are rotated incorrectly or scaled wrong after import, apply rotation and scale in Blender before exporting:
+
+```
+Select All (A) → Object Menu (or Right-Click)
+└── Apply
+    ├── ☑️ Rotation (alone)
+    └── ☑️ Scale (alone)
+```
+
+**Why this works:** Ensures consistent orientation and scale for the Multi-Mesh Importer while keeping your pivot points intact.
+
+### Alternative: Apply All Transforms
+
+If you're still having issues, you can apply all transforms in Blender:
+
+```
+Select All (A) → Object Menu (or Right-Click)
+└── Apply → All Transforms
+```
+
+**Note:** This WILL center pivots to the center of the world. This means if you need to move the object the pivot will be in the middle of the scene.
 
 ## 📁 What You Get
 

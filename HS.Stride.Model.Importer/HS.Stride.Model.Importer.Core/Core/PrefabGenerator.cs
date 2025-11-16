@@ -89,11 +89,19 @@ namespace HS.Stride.Model.Importer.Core.Core
             sb.AppendLine("                        Position: {X: 0.0, Y: 0.0, Z: 0.0}");
             sb.AppendLine("                        Rotation: {X: 0.0, Y: 0.0, Z: 0.0, W: 1.0}");
             sb.AppendLine("                        Scale: {X: 1.0, Y: 1.0, Z: 1.0}");
-            sb.AppendLine("                        Children:");
 
-            foreach (var childRef in childReferences)
+            // Write Children - either {} for empty or proper mapping with references
+            if (childReferences.Count == 0)
             {
-                sb.AppendLine($"                            {childRef}");
+                sb.AppendLine("                        Children: {}");
+            }
+            else
+            {
+                sb.AppendLine("                        Children:");
+                foreach (var childRef in childReferences)
+                {
+                    sb.AppendLine($"                            {childRef}");
+                }
             }
 
             return sb.ToString();

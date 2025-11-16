@@ -14,9 +14,13 @@ namespace HS.Stride.Model.Importer.Core.Utilities
             var materialsSection = "";
             if (materialReferences?.Any() == true)
             {
-                var materialEntries = materialReferences.Select(m => 
+                var materialEntries = materialReferences.Select(m =>
                     $"    {GenerateMaterialHash(m.Key)}:\n        Name: {m.Key}\n        MaterialInstance:\n            Material: {m.Value}");
-                materialsSection = string.Join("\n", materialEntries);
+                materialsSection = "\n" + string.Join("\n", materialEntries);
+            }
+            else
+            {
+                materialsSection = " {}";
             }
 
             var skeletonRef = string.IsNullOrEmpty(skeletonReference) ? "null" : skeletonReference;
@@ -30,8 +34,7 @@ Tags: []
 Source: !file {resourcePath}
 Skeleton: {skeletonRef}
 PivotPosition: {{X: 0.0, Y: 0.0, Z: 0.0}}
-Materials:
-{materialsSection}
+Materials:{materialsSection}
 Modifiers: {{}}
 ~SourceHashes:
     {hashKey}~{resourcePath}: {sourceHash}
