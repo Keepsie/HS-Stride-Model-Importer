@@ -1,7 +1,7 @@
 ﻿<Window x:Class="HS.Stride.Model.Importer.UI.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="HS Stride Model Importer v1.2.0 - © 2025 Happenstance Games" 
+        Title="HS Stride Model Importer" 
         Height="750" Width="700" ResizeMode="CanMinimize">
     
     <Grid Background="#F5F5F5">

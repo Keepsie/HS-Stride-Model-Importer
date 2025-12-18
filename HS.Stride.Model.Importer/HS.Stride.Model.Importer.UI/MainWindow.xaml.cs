@@ -1,6 +1,7 @@
 ﻿// HS Stride Model Importer (c) 2025 Happenstance Games LLC - MIT License
 
 using System.IO;
+using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 using HS.Stride.Model.Importer.Core.Core;
@@ -17,7 +18,9 @@ namespace HS.Stride.Model.Importer.UI
             InitializeComponent();
             _modelImporter = new StrideModelImporter();
             _fbxProcessor = new FbxProcessor();
-            
+
+            var version = Assembly.GetExecutingAssembly().GetName().Version;
+            Title = $"HS Stride Model Importer v{version?.Major}.{version?.Minor}.{version?.Build} - © 2025 Happenstance Games";
         }
 
         #region Multi-Mesh Tab Event Handlers

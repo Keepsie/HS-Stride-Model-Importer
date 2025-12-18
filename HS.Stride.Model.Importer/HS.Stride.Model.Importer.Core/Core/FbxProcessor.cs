@@ -241,29 +241,38 @@ namespace HS.Stride.Model.Importer.Core.Core
             return scene.Materials.Select((m, i) => m.Name ?? $"Material_{i}").ToList();
         }
 
-        private async Task<List<string>> SplitMeshesToSeparateFilesAsync(Scene scene, string filePath, 
+        private async Task<List<string>> SplitMeshesToSeparateFilesAsync(Scene scene, string filePath,
             string outputDir, List<FbxMeshInfo> meshInfos, IProgress<string>? progress = null)
         {
             var generatedFiles = new List<string>();
             var baseName = Path.GetFileNameWithoutExtension(filePath);
+            var sourceExtension = Path.GetExtension(filePath).ToLowerInvariant();
+
+            // Determine export format based on source file
+            var (exportFormat, outputExtension) = sourceExtension switch
+            {
+                ".glb" => ("glb2", ".glb"),
+                ".gltf" => ("gltf2", ".gltf"),
+                _ => ("fbx", ".fbx")
+            };
 
             for (int i = 0; i < meshInfos.Count; i++)
             {
                 var meshInfo = meshInfos[i];
                 progress?.Report($"Exporting mesh {i + 1}/{meshInfos.Count}: {meshInfo.Name}");
-                
+
                 try
                 {
-                    var outputPath = Path.Combine(outputDir, $"{baseName}_{meshInfo.Name}.fbx");
-                    
+                    var outputPath = Path.Combine(outputDir, $"{baseName}_{meshInfo.Name}{outputExtension}");
+
                     await Task.Run(() =>
                     {
                         var newScene = CreateSceneForMeshNode(scene, meshInfo);
-                        
+
                         if (newScene != null)
                         {
                             // Export with minimal processing to preserve data
-                            _context.ExportFile(newScene, outputPath, "fbx", PostProcessSteps.None);
+                            _context.ExportFile(newScene, outputPath, exportFormat, PostProcessSteps.None);
                         }
                     });
                     

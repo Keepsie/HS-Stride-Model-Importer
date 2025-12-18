@@ -8,7 +8,7 @@ namespace HS.Stride.Model.Importer.Core.Core
 {
     public class PrefabGenerator
     {
-        public PrefabGenerationResult GeneratePrefab(FbxSplitResult splitResult, string prefabName, string outputDirectory, Dictionary<string, string> assetReferences)
+        public PrefabGenerationResult GeneratePrefab(FbxSplitResult splitResult, string prefabName, string outputDirectory, Dictionary<string, string> assetReferences, bool applyFbxFixes = true)
         {
             var result = new PrefabGenerationResult
             {
@@ -18,7 +18,7 @@ namespace HS.Stride.Model.Importer.Core.Core
 
             try
             {
-                var prefabContent = GeneratePrefabContent(prefabName, splitResult.MeshInfos, assetReferences);
+                var prefabContent = GeneratePrefabContent(prefabName, splitResult.MeshInfos, assetReferences, applyFbxFixes);
                 File.WriteAllText(result.PrefabFilePath, prefabContent);
 
                 result.ImportedAssets.AddRange(assetReferences.Keys);
@@ -33,7 +33,7 @@ namespace HS.Stride.Model.Importer.Core.Core
             return result;
         }
 
-        private string GeneratePrefabContent(string prefabName, List<FbxMeshInfo> meshInfos, Dictionary<string, string> assetReferences)
+        private string GeneratePrefabContent(string prefabName, List<FbxMeshInfo> meshInfos, Dictionary<string, string> assetReferences, bool applyFbxFixes)
         {
             var rootGuid = Guid.NewGuid().ToString();
             var prefabGuid = Guid.NewGuid().ToString();
@@ -59,7 +59,7 @@ namespace HS.Stride.Model.Importer.Core.Core
 
                 if (assetReferences.TryGetValue(meshInfo.Name, out var assetReference))
                 {
-                    entityParts.Add(GenerateEntityPart(meshInfo, entityGuid, transformGuid, modelGuid, assetReference));
+                    entityParts.Add(GenerateEntityPart(meshInfo, entityGuid, transformGuid, modelGuid, assetReference, applyFbxFixes));
                     childReferences.Add(GenerateChildReference(transformGuid)); // Use transformGuid, not entityGuid!
                 }
             }
@@ -113,12 +113,15 @@ namespace HS.Stride.Model.Importer.Core.Core
             return $"{refGuid}: ref!! {entityGuid}";
         }
 
-        private string GenerateEntityPart(FbxMeshInfo meshInfo, string entityGuid, string transformGuid, string modelGuid, string assetReference)
+        private string GenerateEntityPart(FbxMeshInfo meshInfo, string entityGuid, string transformGuid, string modelGuid, string assetReference, bool applyFbxFixes)
         {
             var sb = new StringBuilder();
-            var p = new System.Numerics.Vector3(meshInfo.Position.X / 100f, meshInfo.Position.Y / 100f, meshInfo.Position.Z / 100f);
+            // FBX uses centimeters, so divide by 100 to convert to meters. GLB/GLTF already use meters.
+            var p = applyFbxFixes
+                ? new System.Numerics.Vector3(meshInfo.Position.X / 100f, meshInfo.Position.Y / 100f, meshInfo.Position.Z / 100f)
+                : meshInfo.Position;
             var r = meshInfo.Rotation;
-            var s = meshInfo.Scale;
+            var s = applyFbxFixes ? meshInfo.Scale : System.Numerics.Vector3.One;
 
             sb.AppendLine("        -   Entity:");
             sb.AppendLine($"                Id: {entityGuid}");

@@ -66,7 +66,8 @@ namespace HS.Stride.Model.Importer.Core.Core
                 var prefabOutputDirectory = Path.Combine(strideProjectPath, projectStructure.AssetsPath, baseName);
                 
                 progress?.Report("Generating prefab...");
-                var prefabResult = _prefabGenerator.GeneratePrefab(splitResult, actualPrefabName, prefabOutputDirectory, assetReferences);
+                var isFbx = Path.GetExtension(fbxFilePath).Equals(".fbx", StringComparison.OrdinalIgnoreCase);
+                var prefabResult = _prefabGenerator.GeneratePrefab(splitResult, actualPrefabName, prefabOutputDirectory, assetReferences, applyFbxFixes: isFbx);
                 result.PrefabResult = prefabResult;
 
                 if (!prefabResult.Success)
