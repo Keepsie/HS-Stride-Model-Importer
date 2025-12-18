@@ -52,7 +52,26 @@ This tool splits your multi-mesh FBX into individual meshes and creates a Stride
 HS.Stride.Model.Importer.Console.exe MyModel.fbx ./output/
 ```
 
-## ⚠️ Important Blender Export Notes
+## 🚨 Blender Users: FBX vs glTF
+
+### Recommended: Use glTF/GLB from Blender
+**glTF/GLB exports from Blender work cleanly with Stride** - no special steps needed.
+
+```
+Blender → File → Export → glTF 2.0 (.glb/.gltf)
+```
+
+This has been tested with rigged models, Auto Rig Pro, and standard Blender workflows. Just export and import - it works.
+
+### FBX from Blender: Works If You Apply Transform
+FBX exports from Blender work with Stride as long as you enable **Apply Transform** on export. Without it, you may get scale, rotation, and transform problems.
+
+### FBX from Other Tools Works Fine
+- **Mixamo** → FBX works directly
+- **Cascadeur** → FBX works directly
+- **Maya** → FBX works directly
+
+## ⚠️ FBX Export Settings (If Using FBX from Blender)
 
 ### ✅ Always Enable "Apply Transform" When Exporting
 
@@ -96,6 +115,16 @@ Select All (A) → Object Menu (or Right-Click)
 ```
 
 **Note:** This WILL center pivots to the center of the world. This means if you need to move the object the pivot will be in the middle of the scene.
+
+### Double-Export Workaround (Auto Rig Pro or When Apply Transform Isn't Available)
+
+If you're using Auto Rig Pro or another tool where you can't apply transform on export:
+
+1. Export mesh and bones only (use ARP's export menu if available)
+2. Re-import the FBX back into a fresh Blender scene
+3. Apply scale on bones specifically
+4. Export again with **Apply Transform** enabled
+5. Import this double-exported FBX to Stride
 
 ## 📁 What You Get
 
