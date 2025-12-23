@@ -72,7 +72,7 @@
                                             BorderThickness="1" Foreground="#1976D2" FontWeight="SemiBold"
                                             Click="BrowseProjectButton_Click"/>
                                 </Grid>
-                                <TextBlock Text="Select target Stride project directory" 
+                                <TextBlock Text="Select Stride project solution file (.sln)"
                                            FontSize="11" Foreground="#666" Margin="0,4,0,0"/>
                             </StackPanel>
                             

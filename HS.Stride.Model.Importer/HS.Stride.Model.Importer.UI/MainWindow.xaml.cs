@@ -42,14 +42,17 @@ namespace HS.Stride.Model.Importer.UI
 
         private void BrowseProjectButton_Click(object sender, RoutedEventArgs e)
         {
-            var dialog = new System.Windows.Forms.FolderBrowserDialog
+            var dialog = new Microsoft.Win32.OpenFileDialog
             {
-                Description = "Select Stride Project Directory"
+                Title = "Select Stride Project Solution",
+                Filter = "Solution Files|*.sln|All Files|*.*",
+                CheckFileExists = true
             };
 
-            if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            if (dialog.ShowDialog() == true)
             {
-                StrideProjectBox.Text = dialog.SelectedPath;
+                // Store the directory containing the .sln file
+                StrideProjectBox.Text = Path.GetDirectoryName(dialog.FileName) ?? dialog.FileName;
             }
         }
 

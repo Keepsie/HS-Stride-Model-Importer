@@ -55,13 +55,18 @@ HS.Stride.Model.Importer.Console.exe MyModel.fbx ./output/
 ## 🚨 Blender Users: FBX vs glTF
 
 ### Recommended: Use glTF/GLB from Blender
-**glTF/GLB exports from Blender work cleanly with Stride** - no special steps needed.
+**glTF/GLB exports from Blender generally work well with Stride.**
 
 ```
 Blender → File → Export → glTF 2.0 (.glb/.gltf)
 ```
 
-This has been tested with rigged models, Auto Rig Pro, and standard Blender workflows. Just export and import - it works.
+**Before exporting:** Apply rotation and scale in Blender to avoid transform issues:
+```
+Select All (A) → Object Menu → Apply → Rotation & Scale
+```
+
+**Note:** Some very complex GLB scenes with many parts may crash during mesh splitting. If this happens, use the FBX workflow instead - export as FBX from Blender with **Apply Transform** enabled (see below).
 
 ### FBX from Blender: Works If You Apply Transform
 FBX exports from Blender work with Stride as long as you enable **Apply Transform** on export. Without it, you may get scale, rotation, and transform problems.
