@@ -2,6 +2,31 @@
 
 Multi-mesh FBX splitter and prefab creator for Stride Game Engine. Converts flattened FBX imports into individual selectable mesh parts with proper hierarchy and transform data preservation.
 
+## 📦 NuGet Package
+
+To use the core library in your own project:
+
+```
+dotnet add package HS.Stride.Model.Importer.Core
+```
+
+```csharp
+using HS.Stride.Model.Importer.Core.Core;
+
+using var importer = new StrideModelImporter();
+var result = await importer.ImportModelAsync(
+    fbxFilePath: @"C:\Models\Complex_Model.fbx",
+    outputDirectory: @"C:\Temp\Output",
+    strideProjectPath: @"C:\MyStrideGame");
+
+if (result.Success)
+    Console.WriteLine($"Split into {result.SplitResult?.MeshInfos.Count} meshes");
+```
+
+Install `HS.Stride.Model.Importer.Core` alone if you want to integrate multi-mesh splitting and prefab generation into your own tools or pipelines without the UI or console app.
+
+---
+
 ![HS Model Importer UI](hs_mode_importer_ui.PNG)
 
 ## 📸 Example: Before & After

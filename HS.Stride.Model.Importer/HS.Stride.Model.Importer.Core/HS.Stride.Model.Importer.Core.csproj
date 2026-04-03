@@ -7,15 +7,24 @@
     <Version>1.3.1</Version>
     <Authors>Happenstance Games LLC</Authors>
     <Company>Happenstance Games LLC</Company>
-    <Description>Multi-mesh FBX splitter and prefab creator for Stride Game Engine. Converts flattened FBX imports into individual selectable.</Description>
-    <Copyright>Copyright (c) 2025 Happenstance Games LLC</Copyright>
+    <Description>Split multi-mesh 3D models into individual parts and generate Stride prefabs without the editor. Supports FBX, GLB, GLTF, OBJ, and DAE with transform preservation.</Description>
+    <Copyright>Copyright (c) 2025-2026 Happenstance Games LLC</Copyright>
+    <PackageId>HS.Stride.Model.Importer.Core</PackageId>
     <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/Keepsie/HS-Stride-Model-Importer</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/Keepsie/HS-Stride-Model-Importer</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>stride;stride3d;game-engine;model-importer;fbx;gltf;multi-mesh;prefab;gamedev;stride-engine</PackageTags>
+    <PackageReleaseNotes>v1.3.1</PackageReleaseNotes>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="AssimpNet" Version="5.0.0-beta1" />
     <PackageReference Include="System.Text.Json" Version="10.0.0" />
     <None Include="..\..\README.md" Pack="true" PackagePath="\" Condition="Exists('..\..\README.md')" />
+    <None Include="..\..\hs_stride_model_importer_api.txt" Pack="true" PackagePath="\" Condition="Exists('..\..\hs_stride_model_importer_api.txt')" />
   </ItemGroup>
 
 </Project>

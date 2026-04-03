@@ -1,0 +1,316 @@
+HS STRIDE MODEL IMPORTER CORE - LLM API REFERENCE
+===================================================
+Version: 1.3.1 | .NET 8.0 | Package: HS.Stride.Model.Importer.Core
+Copyright (c) 2025 Happenstance Games LLC | MIT License
+
+Split multi-mesh 3D models (FBX, GLB, GLTF, OBJ, DAE) into individual mesh files
+and generate Stride prefabs with proper hierarchy and transform preservation.
+
+================================================================================
+QUICK START
+================================================================================
+
+```csharp
+using HS.Stride.Model.Importer.Core.Core;
+
+using var importer = new StrideModelImporter();
+
+var result = await importer.ImportModelAsync(
+    fbxFilePath: @"C:\Models\Complex_Model.fbx",
+    outputDirectory: @"C:\Output",
+    strideProjectPath: @"C:\MyStrideGame",
+    prefabName: "MyModel");
+
+if (result.Success)
+{
+    Console.WriteLine($"Generated {result.GeneratedFiles.Count} files");
+    Console.WriteLine($"Meshes split: {result.SplitResult?.MeshInfos.Count}");
+}
+else
+{
+    foreach (var error in result.Errors)
+        Console.WriteLine($"Error: {error}");
+}
+```
+
+================================================================================
+STRIDEMODELIMPORTER (Main Entry Point)
+================================================================================
+Namespace: HS.Stride.Model.Importer.Core.Core
+Implements: IDisposable
+
+Constructor:
+  new StrideModelImporter()    // No parameters
+
+Methods:
+
+  Task<ModelImportResult> ImportModelAsync(
+      string fbxFilePath,               // Path to 3D model file
+      string outputDirectory,           // Temp output directory for split files
+      string strideProjectPath,         // Path to Stride project root
+      string? prefabName = null,        // Custom prefab name (defaults to filename)
+      IProgress<string>? progress = null) // Optional progress reporting
+
+  ValidationResult ValidateInput(
+      string modelFilePath,
+      string outputDirectory,
+      string strideProjectPath)
+
+Notes:
+  - Requires multi-mesh models (2+ meshes). Single-mesh models return a warning.
+  - Temporary split files are cleaned up automatically after import.
+  - FBX positions are auto-converted from centimeters to meters.
+  - GLB/GLTF positions are used as-is (already in meters).
+
+================================================================================
+MODELIMPORTRESULT
+================================================================================
+
+Properties:
+  string OriginalFilePath              // Source model path
+  string OutputDirectory               // Output directory used
+  FbxSplitResult? SplitResult          // Mesh splitting details
+  PrefabGenerationResult? PrefabResult // Prefab creation details
+  List<string> GeneratedFiles          // All generated file paths
+  bool Success
+  List<string> Errors
+  List<string> Warnings
+
+================================================================================
+VALIDATIONRESULT
+================================================================================
+
+Properties:
+  List<string> Errors
+  List<string> Warnings
+  bool IsValid                         // True if no errors
+
+================================================================================
+FBXSPLITRESULT (Mesh Splitting Output)
+================================================================================
+
+Properties:
+  string OriginalFilePath
+  string OutputDirectory
+  List<FbxMeshInfo> MeshInfos          // Info about each extracted mesh
+  List<string> GeneratedFiles          // Paths to split mesh files
+  List<string> MaterialNames           // Material names found in scene
+  bool Success
+  List<string> Errors
+  List<string> Warnings
+
+================================================================================
+FBXMESHINFO (Individual Mesh Data)
+================================================================================
+Namespace: HS.Stride.Model.Importer.Core.Models
+
+Properties:
+  string Name                          // Unique clean name (e.g., "Gun_Body_001")
+  string OriginalName                  // Original node name from file
+  Vector3 Position                     // Local position (relative to parent)
+  Quaternion Rotation                  // Local rotation
+  Vector3 Scale                        // Local scale (default: 1,1,1)
+  int VertexCount
+  int FaceCount
+  List<string> MaterialNames           // Materials referenced by this mesh
+  string? ParentName                   // Parent node name
+  string? NodePath                     // Full hierarchy path
+  int MeshIndex
+  List<int> MeshIndices                // Scene mesh indices for this node
+  List<FbxMeshInfo> Children
+
+================================================================================
+PREFABGENERATIONRESULT
+================================================================================
+
+Properties:
+  string PrefabFilePath                // Path to generated .sdprefab
+  string PrefabName
+  List<string> ImportedAssets          // Asset names included in prefab
+  bool Success
+  List<string> Errors
+  List<string> Warnings
+
+================================================================================
+SUPPORTED FILE FORMATS
+================================================================================
+
+| Format | Extensions       | Export Format | Notes                          |
+|--------|-----------------|---------------|--------------------------------|
+| FBX    | .fbx            | .fbx          | Positions divided by 100       |
+| glTF   | .gltf           | .gltf         | Positions used as-is           |
+| GLB    | .glb            | .glb          | Positions used as-is           |
+| OBJ    | .obj            | .fbx          | Exported as FBX                |
+| DAE    | .dae            | .fbx          | Exported as FBX                |
+
+================================================================================
+OUTPUT STRUCTURE
+================================================================================
+
+After importing "Complex_Model.fbx" into a Stride project:
+
+Assets/Complex_Model/
+├── Gun_Body_000.sdm3d
+├── Gun_Barrel_001.sdm3d
+├── Gun_Sight_002.sdm3d
+└── Complex_Model.sdprefab        # Prefab with hierarchy
+
+Resources/Complex_Model/
+├── Complex_Model_Gun_Body_000.fbx
+├── Complex_Model_Gun_Barrel_001.fbx
+└── Complex_Model_Gun_Sight_002.fbx
+
+================================================================================
+FBXPROCESSOR (Mesh Splitting Engine)
+================================================================================
+Namespace: HS.Stride.Model.Importer.Core.Core
+Implements: IDisposable
+Dependency: AssimpNet 5.0.0-beta1
+
+Methods:
+
+  Task<FbxSplitResult> ProcessFbxFileAsync(
+      string fbxFilePath,
+      string outputDirectory,
+      IProgress<string>? progress = null)
+
+Notes:
+  - Loads models with no post-processing to preserve exact data
+  - Walks full scene hierarchy to extract all mesh nodes
+  - Exports each mesh node as a separate file in source format
+  - Zeroes out position in exported files (position stored in prefab)
+
+================================================================================
+PREFABGENERATOR
+================================================================================
+Namespace: HS.Stride.Model.Importer.Core.Core
+
+Methods:
+
+  PrefabGenerationResult GeneratePrefab(
+      FbxSplitResult splitResult,
+      string prefabName,
+      string outputDirectory,
+      Dictionary<string, string> assetReferences,
+      bool applyFbxFixes = true)    // Divide positions by 100 for FBX
+
+Notes:
+  - Generates YAML-formatted .sdprefab files
+  - Creates root entity with child entities for each mesh
+  - Each child has TransformComponent + ModelComponent
+  - Asset references use format "guid:assetName"
+
+================================================================================
+ASSETGENERATOR (Stride Asset Creation)
+================================================================================
+Namespace: HS.Stride.Model.Importer.Core.Utilities
+
+Methods:
+
+  string GenerateModelAsset(
+      string fbxPath,
+      string packageName,
+      string modelName,
+      Dictionary<string, string>? materialReferences = null,
+      string? skeletonReference = null)
+
+  string ExtractGuidFromAsset(string assetContent)
+
+================================================================================
+PATHHELPER (Utilities)
+================================================================================
+Namespace: HS.Stride.Model.Importer.Core.Utilities
+
+Static Methods:
+
+  bool IsStrideProject(string directoryPath)
+  ProjectValidationResult ValidateStrideProject(string directoryPath)
+  bool IsImageFile(string filePath)
+  bool IsModelFile(string filePath)
+  bool IsAudioFile(string filePath)
+  bool IsRawAssetFile(string filePath)
+  bool ShouldIgnoreFile(string filePath)
+  string MakeValidAssetName(string input)
+
+ProjectValidationResult:
+  bool IsValid
+  bool HasSolutionFile
+  bool HasStridePackages
+  string ErrorMessage
+  string SuccessMessage
+  List<string> Suggestions
+
+================================================================================
+FILEHELPER (File Operations)
+================================================================================
+Namespace: HS.Stride.Model.Importer.Core.Utilities
+
+Static Methods:
+
+  bool SaveFile(string content, string filePath)
+  bool EnsureDirectoryExists(string path)
+  bool CopyFile(string source, string dest, bool overwrite = true)
+  string GetFileHash(string filePath)                // SHA256 hex string
+
+================================================================================
+PROJECTSTRUCTUREDETECTOR
+================================================================================
+Namespace: HS.Stride.Model.Importer.Core.Utilities
+
+Static Methods:
+
+  TargetProjectStructure DetectTargetProjectStructure(string projectPath)
+
+TargetProjectStructure:
+  ProjectStructureType Type         // Fresh, Template, Unknown
+  string AssetsPath
+  string ResourcesPath
+  string CodePath
+
+ProjectStructureType:
+  Unknown   // Unrecognized
+  Fresh     // New project: ProjectName/ProjectName/Assets/
+  Template  // Template: Assets/ at root
+
+================================================================================
+COMMON PATTERNS
+================================================================================
+
+### Import with Progress Reporting
+```csharp
+using var importer = new StrideModelImporter();
+
+var progress = new Progress<string>(msg => Console.WriteLine(msg));
+var result = await importer.ImportModelAsync(
+    @"C:\Models\Building.glb",
+    @"C:\Temp\Output",
+    @"C:\MyStrideGame",
+    progress: progress);
+```
+
+### Validate Before Import
+```csharp
+var validation = importer.ValidateInput(modelPath, outputDir, projectPath);
+if (!validation.IsValid)
+{
+    foreach (var error in validation.Errors)
+        Console.WriteLine($"Error: {error}");
+    return;
+}
+```
+
+### Inspect Split Results
+```csharp
+var result = await importer.ImportModelAsync(...);
+if (result.SplitResult != null)
+{
+    foreach (var mesh in result.SplitResult.MeshInfos)
+    {
+        Console.WriteLine($"{mesh.Name}: {mesh.VertexCount} verts, {mesh.FaceCount} faces");
+        Console.WriteLine($"  Position: {mesh.Position}");
+        Console.WriteLine($"  Materials: {string.Join(", ", mesh.MaterialNames)}");
+    }
+}
+```
+
+================================================================================
